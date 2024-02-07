@@ -15,11 +15,11 @@ LIMIT 10;
 
 /* 3. How many postings are in Tennessee? How many are there in either Tennessee or Kentucky? */
 
-SELECT COUNT(*) AS tn_jobs
+SELECT COUNT(*) AS num_tn_jobs
 FROM data_analyst_jobs
 WHERE location = 'TN';
 
-SELECT COUNT(*) AS tn_and_ky_jobs
+SELECT COUNT(*) AS num_tn_and_ky_jobs
 FROM data_analyst_jobs
 WHERE location IN ('TN', 'KY');
 
@@ -27,7 +27,7 @@ WHERE location IN ('TN', 'KY');
 
 /* 4. How many postings in Tennessee have a star rating above 4? */
 
-SELECT COUNT(*) AS num_of_postings
+SELECT COUNT(*) AS num_tn_jobs_four_stars
 FROM data_analyst_jobs
 WHERE location = 'TN'
 	AND star_rating > 4;
@@ -36,7 +36,7 @@ WHERE location = 'TN'
 
 /* 5. How many postings in the dataset have a review count between 500 and 1000? */
 
-SELECT COUNT(*) AS num_of_jobs
+SELECT COUNT(*) AS num_jobs_many_reviews
 FROM data_analyst_jobs
 WHERE review_count BETWEEN 500 AND 1000;
 
@@ -48,6 +48,7 @@ SELECT location AS state,
 	AVG(star_rating) AS avg_rating
 FROM data_analyst_jobs
 GROUP BY location
+HAVING AVG(star_rating) IS NOT NULL
 ORDER BY avg_rating DESC;
 
 -- Answer: NE
@@ -60,7 +61,7 @@ ORDER BY title;
 
 -- This query shows the count
 
-SELECT COUNT(DISTINCT title) AS num_of_jobs
+SELECT COUNT(DISTINCT title) AS num_job_titles
 FROM data_analyst_jobs;
 
 -- Answer: 881
@@ -84,7 +85,7 @@ ORDER BY company;
 
 -- This query shows the count
 
-SELECT COUNT(DISTINCT company)
+SELECT COUNT(DISTINCT company) AS num_companies_over_5000_reviews
 FROM (
 	SELECT company
 	FROM data_analyst_jobs
@@ -113,6 +114,7 @@ GROUP BY company
 HAVING AVG(review_count) > 5000;
 
 -- Answer: 6 companies tied for the highest star rating >5000 ratings: Unilever, Nike, American Express, Microsoft, Kaiser Permanente, and General Motors
+--
 
 /* 11. Find all the job titles that contain the word ‘Analyst’. How many different job titles are there? */
 
@@ -130,7 +132,7 @@ WHERE title ILIKE '%analyst%';
 
 /* 12. How many different job titles do not contain either the word ‘Analyst’ or the word ‘Analytics’? What word do these positions have in common? */
 
-SELECT title
+SELECT title AS job_title
 FROM data_analyst_jobs
 WHERE title NOT ILIKE '%analy%'
 
@@ -142,3 +144,22 @@ WHERE title NOT ILIKE '%analyst%' AND title NOT ILIKE '%analytics%'
 
 -- Answer: 4 job titles, which are all data visualization jobs (Tableau)
 
+/* BONUS You want to understand which jobs requiring SQL are hard to fill. Find the number of jobs by industry (domain) that require SQL and have been posted longer than 3 weeks.
+-Disregard any postings where the domain is NULL.
+-Order your results so that the domain with the greatest number of hard to fill jobs is at the top.
+-Which three industries are in the top 4 on this list? How many jobs have been listed for more than 3 weeks for each of the top 4? */
+
+SELECT domain AS industry, 
+	COUNT(*) AS num_sql_jobs
+FROM (
+	SELECT * 
+	FROM data_analyst_jobs 
+	WHERE skill ILIKE '%SQL%' 
+		AND days_since_posting > 21
+	) AS sql_jobs
+GROUP BY industry
+HAVING domain IS NOT NULL
+ORDER BY num_sql_jobs DESC;
+
+-- Answer: The top 4 industries with hard to fill SQL jobs are Internet and Software, Banks and Financial Services, Consulting and Business Services, and Health Care. 
+--
