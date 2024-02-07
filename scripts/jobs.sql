@@ -58,6 +58,8 @@ SELECT DISTINCT title AS job_title
 FROM data_analyst_jobs
 ORDER BY title;
 
+-- This query shows the count
+
 SELECT COUNT(DISTINCT title) AS num_of_jobs
 FROM data_analyst_jobs;
 
@@ -72,3 +74,59 @@ WHERE location = 'CA';
 -- Answer: 230
 
 /* 9. Find the name of each company and its average star rating for all companies that have more than 5000 reviews across all locations. How many companies are there with more that 5000 reviews across all locations? */
+
+SELECT company, 
+	AVG(star_rating) AS avg_star_rating
+FROM data_analyst_jobs
+GROUP BY company
+HAVING AVG(review_count) > 5000
+ORDER BY company;
+
+-- This query shows the count
+
+SELECT COUNT(DISTINCT company)
+FROM (
+	SELECT company
+	FROM data_analyst_jobs
+	GROUP BY company
+	HAVING AVG(review_count) > 5000
+	) AS num_companies_over_5000_reviews;
+
+-- Answer: 40 (There is one additional row with >5000 reviews but no company name)
+
+/* 10. Add the code to order the query in #9 from highest to lowest average star rating. Which company with more than 5000 reviews across all locations in the dataset has the highest star rating? What is that rating? */
+
+SELECT company, 
+	AVG(star_rating) AS avg_star_rating
+FROM data_analyst_jobs
+GROUP BY company
+HAVING AVG(review_count) > 5000
+ORDER BY avg_star_rating DESC;
+
+-- Here is a version with rankings:
+
+SELECT company, 
+	AVG(star_rating) AS avg_star_rating,
+	RANK() OVER (ORDER BY AVG(star_rating) DESC) AS rank_by_rating
+FROM data_analyst_jobs
+GROUP BY company
+HAVING AVG(review_count) > 5000;
+
+-- Answer: 6 companies tied for the highest star rating >5000 ratings: Unilever, Nike, American Express, Microsoft, Kaiser Permanente, and General Motors
+
+/* 11. Find all the job titles that contain the word ‘Analyst’. How many different job titles are there? */
+
+SELECT DISTINCT title AS analyst_job_title
+FROM data_analyst_jobs
+WHERE title ILIKE '%analyst%';
+
+-- This query shows the count
+
+SELECT COUNT(DISTINCT title) AS num_analyst_jobs
+FROM data_analyst_jobs
+WHERE title ILIKE '%analyst%';
+
+-- Answer: 774
+
+/* 12. How many different job titles do not contain either the word ‘Analyst’ or the word ‘Analytics’? What word do these positions have in common? */
+
