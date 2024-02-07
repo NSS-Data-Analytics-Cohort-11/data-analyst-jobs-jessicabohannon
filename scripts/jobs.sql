@@ -130,3 +130,15 @@ WHERE title ILIKE '%analyst%';
 
 /* 12. How many different job titles do not contain either the word ‘Analyst’ or the word ‘Analytics’? What word do these positions have in common? */
 
+SELECT title
+FROM data_analyst_jobs
+WHERE title NOT ILIKE '%analy%'
+
+-- Just checking to make sure '%analy%' didn't pick up anything extra
+
+SELECT title
+FROM data_analyst_jobs
+WHERE title NOT ILIKE '%analyst%' AND title NOT ILIKE '%analytics%'
+
+-- Answer: 4 job titles, which are all data visualization jobs (Tableau)
+
