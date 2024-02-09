@@ -114,7 +114,6 @@ GROUP BY company
 HAVING AVG(review_count) > 5000;
 
 -- Answer: 6 companies tied for the highest star rating >5000 ratings: Unilever, Nike, American Express, Microsoft, Kaiser Permanente, and General Motors
---
 
 /* 11. Find all the job titles that contain the word ‘Analyst’. How many different job titles are there? */
 
@@ -144,10 +143,10 @@ WHERE title NOT ILIKE '%analyst%' AND title NOT ILIKE '%analytics%'
 
 -- Answer: 4 job titles, which are all data visualization jobs (Tableau)
 
-/* BONUS You want to understand which jobs requiring SQL are hard to fill. Find the number of jobs by industry (domain) that require SQL and have been posted longer than 3 weeks.
+/* BONUS: You want to understand which jobs requiring SQL are hard to fill. Find the number of jobs by industry (domain) that require SQL and have been posted longer than 3 weeks.
 -Disregard any postings where the domain is NULL.
 -Order your results so that the domain with the greatest number of hard to fill jobs is at the top.
--Which three industries are in the top 4 on this list? How many jobs have been listed for more than 3 weeks for each of the top 4? */
+-Which industries are in the top 4 on this list? How many jobs have been listed for more than 3 weeks for each of the top 4? */
 
 SELECT domain AS industry, 
 	COUNT(*) AS num_sql_jobs
@@ -162,4 +161,3 @@ HAVING domain IS NOT NULL
 ORDER BY num_sql_jobs DESC;
 
 -- Answer: The top 4 industries with hard to fill SQL jobs are Internet and Software, Banks and Financial Services, Consulting and Business Services, and Health Care. 
---
