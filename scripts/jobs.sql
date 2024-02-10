@@ -79,6 +79,7 @@ WHERE location = 'CA';
 SELECT company, 
 	AVG(star_rating) AS avg_star_rating
 FROM data_analyst_jobs
+WHERE company IS NOT NULL
 GROUP BY company
 HAVING AVG(review_count) > 5000
 ORDER BY company;
@@ -93,7 +94,7 @@ FROM (
 	HAVING AVG(review_count) > 5000
 	) AS num_companies_over_5000_reviews;
 
--- Answer: 40 (There is one additional row with >5000 reviews but no company name)
+-- Answer: 40 
 
 /* 10. Add the code to order the query in #9 from highest to lowest average star rating. Which company with more than 5000 reviews across all locations in the dataset has the highest star rating? What is that rating? */
 
@@ -139,7 +140,8 @@ WHERE title NOT ILIKE '%analy%'
 
 SELECT title
 FROM data_analyst_jobs
-WHERE title NOT ILIKE '%analyst%' AND title NOT ILIKE '%analytics%'
+WHERE title NOT ILIKE '%analyst%' 
+	AND title NOT ILIKE '%analytics%'
 
 -- Answer: 4 job titles, which are all data visualization jobs (Tableau)
 
@@ -158,6 +160,17 @@ FROM (
 	) AS sql_jobs
 GROUP BY industry
 HAVING domain IS NOT NULL
+ORDER BY num_sql_jobs DESC;
+
+-- Alternatively,
+
+SELECT domain AS industry, 
+	COUNT(title) AS num_sql_jobs
+FROM data_analyst_jobs
+WHERE skill ILIKE '%sql%'
+	AND days_since_posting > (7*3)
+	AND domain IS NOT NULL
+GROUP BY industry
 ORDER BY num_sql_jobs DESC;
 
 -- Answer: The top 4 industries with hard to fill SQL jobs are Internet and Software, Banks and Financial Services, Consulting and Business Services, and Health Care. 
